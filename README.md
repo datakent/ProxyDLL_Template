@@ -1,15 +1,16 @@
-#A ProxyDLL Template for version.dll
-This project provides a simple template for creating a ProxyDLL for version.dll. It is designed to patch opcodes in a target executable at runtime.
+# A ProxyDLL Template for version.dll
 
-How to Use
+This project provides a simple template for creating a ProxyDLL for `version.dll`. It is designed to patch opcodes in a target executable at runtime.
+
+## How to Use
+
 Follow these steps to use the template for your own projects:
 
-Open the dllmain.cpp file.
+1. Open the `dllmain.cpp` file.
 
-Locate the section dedicated to opcode patching. It looks like this:
+2. Locate the section dedicated to opcode patching. It looks like this:
 
-C++
-
+```cpp
 //-------------------------------------------------------------------------------
 // Patch Opcodes (Change assembly code at runtime)
 // Only "targetOffset" and "patchBytes" variables should be modified.
@@ -20,14 +21,14 @@ BYTE patchBytes[] = { 0xE9, 0xD6, 0xFE, 0xFF, 0xFF }; // The bytes to write
 
 WriteOpCodesToExe(targetOffset, patchBytes, sizeof(patchBytes));
 //-------------------------------------------------------------------------------
+```
 
-Modify the targetOffset variable with the file offset of the instruction you want to patch in your target executable.
+3. Modify the targetOffset variable with the file offset of the instruction you want to patch in your target executable.
 
-Modify the patchBytes array with the new opcode bytes you wish to write.
+4. Modify the patchBytes array with the new opcode bytes you wish to write.
 
-Compile the project to generate the version.dll file.
+5. Compile the project to generate the version.dll file.
 
-Place the resulting version.dll in the same directory as your target executable.
+6. Place the resulting version.dll in the same directory as your target executable.
 
-When the executable starts, the DLL will be loaded and the WriteOpCodesToExe function will automatically apply your patch.
-
+7. When the executable starts, the DLL will be loaded and the WriteOpCodesToExe function will automatically apply your patch.
