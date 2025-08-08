@@ -1,7 +1,7 @@
 #include "pch.h"
 #include <windows.h>
 #include <ImageHlp.h>
-#include <cstring> // memcpy için
+#include <cstring> // memcpy iÃ§in
 #include <string>
 
 
@@ -52,7 +52,7 @@ void sub_fnLoad()
     HMODULE libVer = LoadLibraryA(LibFileName);
     if (!libVer)
     {
-        MessageBoxA(NULL, "Version.dll yüklenemedi!", "Hata", MB_OK);
+        MessageBoxA(NULL, "Version.dll yÃ¼klenemedi!", "Hata", MB_OK);
         return;
     }
 
@@ -60,7 +60,7 @@ void sub_fnLoad()
     {
         char pathBuffer[MAX_PATH];
         GetModuleFileNameA(libVer, pathBuffer, MAX_PATH);
-        MessageBoxA(NULL, pathBuffer, "Yüklenen DLL", MB_OK);
+        MessageBoxA(NULL, pathBuffer, "YÃ¼klenen DLL", MB_OK);
     }*/
 
     GetFileVersionInfoA_0 = (GetFileVersionInfoA_Type)GetProcAddress(libVer, "GetFileVersionInfoA");
@@ -76,18 +76,18 @@ void sub_fnLoad()
         !GetFileVersionInfoSizeA_0 || !GetFileVersionInfoSizeW_0 || !GetFileVersionInfoSizeExW_0 ||
         !VerQueryValueA_0 || !VerQueryValueW_0)
     {
-        MessageBoxA(NULL, "DLL FN baðlantý hatasý.", "hata", 0);
+        MessageBoxA(NULL, "DLL FN baÄŸlantÄ± hatasÄ±.", "hata", 0);
         return;
     }
 
 
     //-------------------------------------------------------------------------------
-    // Opcode Patchleme (Assembly kodunu çalýþma anýnýnda deðiþtir)
-    // yalnýzca "targetOffset" ve "patchBytes" deðiþken verileri deðiþtirilmeli.
+    // Patch Opcodes (Change assembly code at runtime)
+    // Only "targetOffset" and "patchBytes" variables should be modified.
 
-    //version_proxy_test.exe
-    DWORD targetOffset = 0xBA7; //hedef dosyada FileOffset
-    BYTE patchBytes[] = { 0xE9 ,0xD6 ,0xFE ,0xFF ,0xFF }; //yazýlacak veri
+    //Example: version_proxy_test.exe
+    DWORD targetOffset = 0xBA7; //FileOffset in the target executable
+    BYTE patchBytes[] = { 0xE9 ,0xD6 ,0xFE ,0xFF ,0xFF }; //The bytes to write
 
     WriteOpCodesToExe(targetOffset, patchBytes, sizeof(patchBytes));
     //-------------------------------------------------------------------------------
@@ -103,16 +103,16 @@ bool WriteOpCodesToExe(DWORD fileOffset, const BYTE* opCodes, size_t opCodeSize)
         return false;
     }
 
-    // 2. PE header'larýný parse et
+    // 2. PE header'larÄ±nÄ± parse et
     PIMAGE_DOS_HEADER pDosHeader = (PIMAGE_DOS_HEADER)hExeBase;
     PIMAGE_NT_HEADERS pNtHeaders = (PIMAGE_NT_HEADERS)((BYTE*)hExeBase + pDosHeader->e_lfanew);
 
-    // 3. Section header'larýný bul
+    // 3. Section header'larÄ±nÄ± bul
     PIMAGE_SECTION_HEADER pSection = IMAGE_FIRST_SECTION(pNtHeaders);
     bool found = false;
 
     for (WORD i = 0; i < pNtHeaders->FileHeader.NumberOfSections; i++, pSection++) {
-        // 4. Fiziksel offset'in hangi section'da olduðunu bul
+        // 4. Fiziksel offset'in hangi section'da olduÄŸunu bul
         if (fileOffset >= pSection->PointerToRawData &&
             fileOffset < (pSection->PointerToRawData + pSection->SizeOfRawData)) {
             found = true;
@@ -120,31 +120,31 @@ bool WriteOpCodesToExe(DWORD fileOffset, const BYTE* opCodes, size_t opCodeSize)
         }
     }
 
-    //Hedef dosya ofseti hiçbir bölümde bulunamadý!
+    //Hedef dosya ofseti hiÃ§bir bÃ¶lÃ¼mde bulunamadÄ±!
     if (!found) {
         return false;
     }
 
-    // 5. Fiziksel offset'i sanal adrese çevir
+    // 5. Fiziksel offset'i sanal adrese Ã§evir
     LPVOID patchAddress = (BYTE*)hExeBase +
         (fileOffset - pSection->PointerToRawData) + pSection->VirtualAddress;
 
     //std::cout << "Patching address: 0x" << std::hex << patchAddress << std::endl;
 
-    // 6. Bellek korumasýný deðiþtir ve yazma iþlemi yap
+    // 6. Bellek korumasÄ±nÄ± deÄŸiÅŸtir ve yazma iÅŸlemi yap
     DWORD oldProtect;
     if (!VirtualProtect(patchAddress, opCodeSize, PAGE_EXECUTE_READWRITE, &oldProtect)) {
         return false;
     }
 
-    // 7. Orijinal byte'larý yedekle
+    // 7. Orijinal byte'larÄ± yedekle
     //BYTE* originalBytes = new BYTE[opCodeSize];
     //memcpy(originalBytes, patchAddress, opCodeSize);
 
-    // 8. Yeni OPCODE'larý yaz
+    // 8. Yeni OPCODE'larÄ± yaz
     memcpy(patchAddress, opCodes, opCodeSize);
 
-    // 9. Orijinal korumayý geri yükle
+    // 9. Orijinal korumayÄ± geri yÃ¼kle
     VirtualProtect(patchAddress, opCodeSize, oldProtect, &oldProtect);
     FlushInstructionCache(GetCurrentProcess(), patchAddress, opCodeSize);
 
@@ -208,4 +208,5 @@ BOOL APIENTRY DllMain( HMODULE hModule,
     }
     return TRUE;
 }
+
 
