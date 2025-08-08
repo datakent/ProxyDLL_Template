@@ -2,6 +2,15 @@
 
 This project provides a simple template for creating a ProxyDLL for `version.dll`. It is designed to patch opcodes in a target executable at runtime.
 
+## What is a ProxyDLL?
+A **Proxy DLL** (Dynamic Link Library) intercepts and replaces an original system DLL to provide powerful runtime control:
+- **API Hooking**: Captures and modifies specific function calls from the target application
+- **Runtime Patching**: Dynamically edits memory/opcodes of running processes (without modifying the physical executable file)
+- **Compatibility Layer**: Enables API redirection for legacy software support
+
+This template is specifically designed for `version.dll` and enables runtime opcode patching of executables loaded in memory.
+
+
 ## How to Use
 
 Follow these steps to use the template for your own projects:
@@ -40,3 +49,7 @@ WriteOpCodesToExe(targetOffset, patchBytes, sizeof(patchBytes));
 DWORD targetOffset = 0x4012A3;
 BYTE patchBytes[] = { 0x90, 0x90, 0x90, 0x90, 0x90 }; // 5-byte NOP
 ```
+
+
+
+
