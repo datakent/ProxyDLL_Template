@@ -50,6 +50,10 @@ DWORD targetOffset = 0x4012A3;
 BYTE patchBytes[] = { 0x90, 0x90, 0x90, 0x90, 0x90 }; // 5-byte NOP
 ```
 
-
+```cpp
+// Game speed hack (patch 30FPS → 60FPS)
+DWORD targetOffset = 0x45C28A;
+BYTE patchBytes[] = { 0xB8, 0x3C, 0x00, 0x00, 0x00 }; // mov eax,60
+```
 
 
