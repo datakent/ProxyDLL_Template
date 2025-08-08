@@ -32,3 +32,11 @@ WriteOpCodesToExe(targetOffset, patchBytes, sizeof(patchBytes));
 6. Place the resulting version.dll in the same directory as your target executable.
 
 7. When the executable starts, the DLL will be loaded and the WriteOpCodesToExe function will automatically apply your patch.
+
+
+## Example Use Case
+```cpp
+// Bypass license check (NOP the verification call)
+DWORD targetOffset = 0x4012A3;
+BYTE patchBytes[] = { 0x90, 0x90, 0x90, 0x90, 0x90 }; // 5-byte NOP
+```
